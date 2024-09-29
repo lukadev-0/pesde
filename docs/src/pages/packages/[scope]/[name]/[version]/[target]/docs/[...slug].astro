@@ -1,0 +1,17 @@
+---
+import PackageDocsLayout from "../../../../../../../components/PackageDocsLayout.astro"
+import { markdown } from "../../../../../../../lib/markdown"
+import { fetchRegistry } from "../../../../../../../lib/registry-api"
+
+export const prerender = false
+
+const { scope, name, version, target, slug } = Astro.params
+
+const page = await fetchRegistry(
+	`packages/${encodeURIComponent(`${scope}/${name}`)}/${version}/${target}?doc=${encodeURIComponent(slug)}`,
+).then((r) => r.text())
+
+const html = await markdown.process(page)
+---
+
+<PackageDocsLayout title={html.data.title} set:html={html} />

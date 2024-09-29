@@ -1,0 +1,11 @@
+---
+import PackageDocsLayout from "../../../../../../components/PackageDocsLayout.astro"
+
+export const prerender = false
+---
+
+<PackageDocsLayout>
+	<pre>
+    {JSON.stringify(Astro.locals, null, 2)}
+  </pre>
+</PackageDocsLayout>

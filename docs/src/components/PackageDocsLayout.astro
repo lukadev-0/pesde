@@ -1,0 +1,38 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro"
+
+import type { DocEntry } from "../lib/registry-api"
+import type { StarlightPageProps } from "@astrojs/starlight/props"
+
+const { scope, name, version, target } = Astro.params
+const basePath = `/packages/${scope}/${name}/${version}/${target}`
+
+function docEntryToStarlight(
+	entry: DocEntry,
+): StarlightPageProps["sidebar"] extends (infer U)[] | undefined ? U : never {
+	if ("name" in entry) {
+		return {
+			label: entry.label,
+			link: `${basePath}/docs/${entry.name}`,
+		}
+	}
+
+	return {
+		label: entry.label,
+		items: entry.items?.map(docEntryToStarlight) ?? [],
+		collapsed: entry.collapsed,
+	}
+}
+---
+
+<StarlightPage
+	frontmatter={{ title: Astro.props.title }}
+	sidebar={[
+		{
+			label: "Docs",
+			items: Astro.locals.pkg!.docs.map(docEntryToStarlight),
+		},
+	]}
+>
+	<slot />
+</StarlightPage>
