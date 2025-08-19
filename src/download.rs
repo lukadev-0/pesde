@@ -164,7 +164,7 @@ impl Project {
 
 					tracing::debug!("downloaded");
 
-					let package_id = Arc::try_unwrap(package_id).map_err(|_| {
+					let package_id = Arc::try_unwrap(package_id).map_err(|_arc| {
 						errors::DownloadGraphError::Arc("package_id still has multiple references".to_string())
 					})?;
 					Ok((package_id, node, fs))
@@ -175,7 +175,7 @@ impl Project {
 
 		let stream = try_stream! {
 			while let Some(res) = tasks.join_next().await {
-				yield res.map_err(|e| errors::DownloadGraphError::Arc(format!("task join error: {}", e)))??;
+				yield res.map_err(|e| errors::DownloadGraphError::Arc(format!("task join error: {e}")))??;
 			}
 		};
 
