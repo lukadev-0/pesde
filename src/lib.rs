@@ -451,7 +451,15 @@ pub async fn find_roots(
 				project_root = Some(path);
 			}
 
-			(_, _) => unreachable!(),
+			(Some(_), Some(_)) => {
+				// Both project root and workspace dir are already found,
+				// continue traversing up to potentially find a higher-level workspace
+			}
+
+			(None, Some(_)) => {
+				// This case should not be reachable given the early return logic above,
+				// but we handle it gracefully by continuing the traversal
+			}
 		}
 	}
 

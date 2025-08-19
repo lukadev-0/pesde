@@ -164,7 +164,10 @@ impl Project {
 
 					tracing::debug!("downloaded");
 
-					Ok((Arc::into_inner(package_id).unwrap(), node, fs))
+					let package_id = Arc::try_unwrap(package_id).map_err(|_| {
+						errors::DownloadGraphError::Arc("package_id still has multiple references".to_string())
+					})?;
+					Ok((package_id, node, fs))
 				}
 				.instrument(span)
 			})
@@ -172,7 +175,7 @@ impl Project {
 
 		let stream = try_stream! {
 			while let Some(res) = tasks.join_next().await {
-				yield res.unwrap()?;
+				yield res.map_err(|e| errors::DownloadGraphError::Arc(format!("task join error: {}", e)))??;
 			}
 		};
 
@@ -199,5 +202,9 @@ pub mod errors {
 		/// Error downloading a package
 		#[error("failed to download package")]
 		DownloadFailed(#[from] Box<crate::source::errors::DownloadError>),
+
+		/// Error with Arc reference counting
+		#[error("Arc reference counting error: {0}")]
+		Arc(String),
 	}
 }
