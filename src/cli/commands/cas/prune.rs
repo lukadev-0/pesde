@@ -13,6 +13,7 @@ use futures::future::BoxFuture;
 use pesde::Subproject;
 use pesde::hash::Hash;
 use pesde::hash::HashAlgorithm;
+use pesde::hash::RawHash;
 use pesde::source::fs::FsEntry;
 use pesde::source::fs::PackageFs;
 use std::collections::HashMap;
@@ -198,7 +199,7 @@ async fn remove_hashes(cas_dir: &Path) -> anyhow::Result<HashSet<Hash>> {
 
 							let hash = Hash::new(
 								algorithm,
-								hex::decode(format!("{prefix}{rest}"))
+								RawHash::from_str(&format!("{prefix}{rest}"))
 									.context("failed to decode hash from path")?,
 							);
 
