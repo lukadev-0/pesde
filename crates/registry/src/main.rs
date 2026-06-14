@@ -22,6 +22,7 @@ use crate::shared::search::Search;
 use crate::util::Env;
 
 mod api;
+mod frontend;
 mod shared;
 mod util;
 
@@ -114,22 +115,17 @@ async fn main() -> std::io::Result<()> {
 		App::new()
 			.app_data(app_state.clone())
 			.wrap(NormalizePath::new(TrailingSlash::Trim))
-			.wrap(Cors::permissive())
+			.wrap(
+				Cors::default()
+					.allow_any_origin()
+					.allow_any_method()
+					.allow_any_header()
+					.send_wildcard(),
+			)
 			.wrap(TracingLogger::default())
 			.wrap(Compress::default())
-			.route(
-				"/",
-				web::get()
-					.to(async || concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"))),
-			)
-			.service(
-				web::scope("/v2")
-					.configure(api::log::http_v2)
-					.configure(api::package::http_v2)
-					.configure(api::scope::http_v2)
-					.configure(api::identity::http_v2)
-					.configure(api::search::http_v2),
-			)
+			.service(web::scope("/api").configure(api::config))
+			.configure(frontend::config)
 	})
 	.bind((address, port))?
 	.run()

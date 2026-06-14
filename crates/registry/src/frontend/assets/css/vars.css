@@ -1,0 +1,34 @@
+:root {
+  --font-body: "Nunito Sans Variable", system-ui, sans-serif;
+
+  --page-max-width: 1200px;
+  --page-padding: 1rem;
+
+  --color-bg: #ffecdf;
+  --color-fg: #5d4032;
+  --color-fg-strong: #0e0c0b;
+  --color-border-subtle: #f0d4c2;
+  --color-border: #ccac99;
+  --color-border-strong: #a98570;
+
+  --color-primary: #e45000;
+  --color-primary-focus-ring: #e4500025;
+
+  --color-navbar-bg: #fbe1d0;
+}
+
+.dark {
+  --color-bg: #110b08;
+  --color-fg: #c3ad96;
+  --color-fg-strong: #e8e1d9;
+  --color-border-subtle: #281f1b;
+  --color-border: #3b302b;
+  --color-border-strong: #68544b;
+
+  --color-primary: #ff8001;
+  --color-primary-focus-ring: #ff800125;
+
+  --color-navbar-bg: #1a130f;
+
+  color-scheme: dark;
+}
